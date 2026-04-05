@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Expo Dev Server",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["/Users/giannicorrao/Claude/OUTRR/.claude/start-expo.sh"],
+      "port": 8081
+    }
+  ]
+}

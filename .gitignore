@@ -33,6 +33,13 @@ yarn-error.*
 # local env files
 .env*.local
 
+# temp/build artifacts
+node.tar.gz
+outrr-init/
+outrr_unpacked/
+claude-501/
+.BBE*
+
 # typescript
 *.tsbuildinfo
 
