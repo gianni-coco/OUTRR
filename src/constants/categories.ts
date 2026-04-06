@@ -7,6 +7,8 @@ export const categories = [
   { slug: 'nightlife', name: 'Nightlife', emoji: '🌙' },
   { slug: 'charity', name: 'Charity', emoji: '💜' },
   { slug: 'pride', name: 'Pride & LGBTQ+', emoji: '🏳️‍🌈' },
+  { slug: 'family', name: 'Family', emoji: '👨‍👩‍👧‍👦' },
+  { slug: 'markets', name: 'Markets', emoji: '🛒' },
 ] as const;
 
 export type CategorySlug = (typeof categories)[number]['slug'];
