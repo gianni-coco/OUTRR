@@ -9,6 +9,7 @@ export const categories = [
   { slug: 'pride', name: 'Pride & LGBTQ+', emoji: '🏳️‍🌈' },
   { slug: 'family', name: 'Family', emoji: '👨‍👩‍👧‍👦' },
   { slug: 'markets', name: 'Markets', emoji: '🛒' },
+  { slug: 'community', name: 'Community', emoji: '🤝' },
 ] as const;
 
 export type CategorySlug = (typeof categories)[number]['slug'];
