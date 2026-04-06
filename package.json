@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build:web": "npx expo export --platform web",
-    "serve": "npx serve dist --single --listen tcp://0.0.0.0:${PORT:-3000}"
+    "serve": "node node_modules/serve/build/main.js dist --single --listen tcp://0.0.0.0:${PORT:-3000}"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",

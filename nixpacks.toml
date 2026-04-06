@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_22"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npm run build:web"]
+
+[start]
+cmd = "node node_modules/serve/build/main.js dist --single --listen tcp://0.0.0.0:$PORT"
