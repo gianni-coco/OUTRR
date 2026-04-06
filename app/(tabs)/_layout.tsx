@@ -37,11 +37,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="add-event"
         options={{
-          title: 'Add Event',
-          tabBarLabel: 'Add',
+          href: null,
         }}
       />
-      <Tabs.Screen
+<Tabs.Screen
         name="saved"
         options={{
           title: 'Saved',
