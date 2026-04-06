@@ -23,8 +23,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="tonight"
         options={{
-          title: 'Tonight',
-          tabBarLabel: 'Tonight',
+          title: 'What\'s On',
+          tabBarLabel: 'Events',
         }}
       />
       <Tabs.Screen

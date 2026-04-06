@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Pressable, TextInput, ScrollView } from 'react-native';
+import { useState, useMemo } from 'react';
+import { View, Text, SectionList, StyleSheet, ActivityIndicator, Pressable, TextInput, ScrollView } from 'react-native';
 import { useEvents } from '../../src/hooks/useEvents';
 import { useLocationDetection } from '../../src/hooks/useLocation';
 import { useCityStore } from '../../src/stores/cityStore';
 import { EventCard } from '../../src/components/events/EventCard';
 import { colors, typography, spacing, borderRadius } from '../../src/constants/theme';
+import type { Event } from '../../src/lib/mockData';
 
 const POPULAR_CITIES = [
   { city: 'Perth', countryCode: 'AU' },
@@ -25,17 +26,40 @@ const POPULAR_CITIES = [
   { city: 'Tokyo', countryCode: 'JP' },
 ];
 
-export default function TonightScreen() {
+function getMonthLabel(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const isThisMonth = date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+  const label = date.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' });
+  return isThisMonth ? `${label} — This Month` : label;
+}
+
+function groupEventsByMonth(events: Event[]): { title: string; data: Event[] }[] {
+  const sorted = [...events].sort(
+    (a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()
+  );
+  const grouped: Record<string, Event[]> = {};
+  sorted.forEach((event) => {
+    const key = getMonthLabel(event.starts_at);
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(event);
+  });
+  return Object.entries(grouped).map(([title, data]) => ({ title, data }));
+}
+
+export default function EventsScreen() {
   const { events, loading, savedIds, handleToggleSave } = useEvents();
   const { city, isDetecting } = useLocationDetection();
   const { setCity } = useCityStore();
   const [showPicker, setShowPicker] = useState(false);
   const [customCity, setCustomCity] = useState('');
 
+  const sections = useMemo(() => groupEventsByMonth(events), [events]);
+
   return (
     <View style={styles.container}>
-      <FlatList
-        data={events}
+      <SectionList
+        sections={sections}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <EventCard
@@ -44,9 +68,16 @@ export default function TonightScreen() {
             onToggleSave={handleToggleSave}
           />
         )}
+        renderSectionHeader={({ section }) => (
+          <View style={styles.monthHeader}>
+            <Text style={styles.monthTitle}>{section.title}</Text>
+            <View style={styles.monthDivider} />
+          </View>
+        )}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.heading}>What's on tonight</Text>
+            <Text style={styles.heading}>What's On</Text>
+            <Text style={styles.subheading}>Events month by month, all year round</Text>
             <Pressable style={styles.cityRow} onPress={() => setShowPicker(!showPicker)}>
               <Text style={styles.city}>
                 {isDetecting ? '📍 Detecting location...' : `📍 ${city}`}
@@ -102,6 +133,7 @@ export default function TonightScreen() {
         }
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        stickySectionHeadersEnabled={true}
         ListEmptyComponent={
           loading ? (
             <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
@@ -121,13 +153,20 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: spacing.lg,
+    paddingBottom: 40,
   },
   header: {
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   heading: {
     ...typography.heading1,
     color: colors.black,
+  },
+  subheading: {
+    ...typography.bodySmall,
+    color: colors.gray[400],
+    marginTop: 2,
+    marginBottom: spacing.xs,
   },
   cityRow: {
     flexDirection: 'row',
@@ -143,6 +182,27 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontWeight: '600',
     marginLeft: spacing.sm,
+  },
+  // Month section headers
+  monthHeader: {
+    backgroundColor: colors.background,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.sm,
+    paddingHorizontal: 0,
+  },
+  monthTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.primary,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+    marginBottom: 6,
+  },
+  monthDivider: {
+    height: 2,
+    backgroundColor: colors.primary,
+    borderRadius: 1,
+    opacity: 0.25,
   },
   empty: {
     ...typography.body,
